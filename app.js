@@ -5,20 +5,36 @@ const app = express();
 app.use(express.json());
 
 app.get("/notes", async (req, res) => {
-  const notes = await getNotes();
-  res.send(notes);
+  try {
+    const notes = await getNotes();
+    res.send(notes);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch notes" });
+  }
 });
 
 app.get("/note/:id", async (req, res) => {
-  const noteId = req.params.id;
-  const notes = await getNote(noteId);
-  res.send(notes);
+  try {
+    const noteId = req.params.id;
+    const note = await getNote(noteId);
+    if (note) {
+      res.send(note);
+    } else {
+      res.status(404).send({ error: "Note not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: "Failed to fetch note" });
+  }
 });
 
 app.post("/create-note", async (req, res) => {
-  const { title, contents } = req.body;
-  const note = await createNote(title, contents);
-  res.status(201).send(note);
+  try {
+    const { title, contents } = req.body;
+    const note = await createNote(title, contents);
+    res.status(201).send(note);
+  } catch (error) {
+    res.status(500).send({ error: "Failed to create note" });
+  }
 });
 
 app.listen(4000, () => {
