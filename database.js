@@ -31,3 +31,14 @@ export async function createNote(title, contents) {
   const addedResult = await getNote(id);
   return addedResult;
 }
+
+export async function updateNote(id, title, contents) {
+  await pool.query("UPDATE notes SET title = ?, contents = ? WHERE id = ?", [
+    title,
+    contents,
+    id,
+  ]);
+
+  const updatedResult = await getNote(id);
+  return updatedResult;
+}
